@@ -115,11 +115,15 @@ class Custom_Code_Manager {
 		require_once CUSTOM_CODE_MANAGER_PATH . 'includes/class-inject-html.php';
 		require_once CUSTOM_CODE_MANAGER_PATH . 'includes/class-inject-js.php';
 		require_once CUSTOM_CODE_MANAGER_PATH . 'includes/class-inject-php.php';
+		require_once CUSTOM_CODE_MANAGER_PATH . 'includes/class-custom-code-manager-post-type.php';
+		require_once CUSTOM_CODE_MANAGER_PATH . 'includes/class-custom-code-manager-meta-boxes.php';
 
 		// Instantiate the injection classes.
 		new Custom_Code_Manager_Inject_PHP();
 		new Custom_Code_Manager_Inject_HTML();
 		new Custom_Code_Manager_Inject_JS();
+		new Custom_Code_Manager_Post_Type();
+		new Custom_Code_Manager_Meta_Boxes();
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
