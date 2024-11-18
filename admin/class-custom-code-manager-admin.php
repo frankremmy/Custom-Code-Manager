@@ -52,6 +52,9 @@ class Custom_Code_Manager_Admin {
 		$this->plugin_name = $custom_code_manager;
 		$this->version = $version;
 
+		add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ) );
+		add_action( 'admin_init', array( $this, 'setup_admin_settings' ) );
+
 	}
 
 	/**
@@ -100,4 +103,95 @@ class Custom_Code_Manager_Admin {
 
 	}
 
+	/*
+	 * Add a menu item in the admin dashboard
+	 */
+	public function add_plugin_admin_menu() {
+		add_menu_page(
+			'Custom Code Manager',
+			'Custom Code Manager',
+			'manage_options',
+			'custom-code-manager',
+			array( $this, 'display_admin_page' ),
+			'dashicons-editor-code',
+			80
+		);
+	}
+
+	/*
+	 * Display the admin page content
+	 */
+	public function display_admin_page() {
+		?>
+		<div class="wrap">
+			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+			<form method="post" action="options.php">
+				<?php
+					settings_fields( 'custom_code_manager' );
+					do_settings_sections( 'custom-code-manager' );
+					submit_button();
+				?>
+			</form>
+		</div>
+		<?php
+	}
+
+	/*
+	 * Register settings, sections and fields for the admin page.
+	 */
+	public function setup_admin_settings() {
+		register_setting( 'custom_code_manager', 'ccm_php_code' );
+		register_setting( 'custom_code_manager', 'ccm_html_code' );
+		register_setting( 'custom_code_manager', 'ccm_js_code' );
+
+		// Add a settings section
+		add_settings_field(
+			'ccm_php_code',
+			'PHP Code',
+			array( $this, 'php_code_field_callback' ),
+			'custom-code-manager',
+			'ccm_settings_section'
+		);
+
+		add_settings_field(
+			'ccm_html_code',
+			'HTML Code',
+			array( $this, 'html_code_field_callback' ),
+			'custom-code-manager',
+			'ccm_settings_section'
+		);
+
+		add_settings_field(
+			'ccm_js_code',
+			'JS Code',
+			array( $this, 'js_code_field_callback' ),
+			'custom-code-manager',
+			'ccm_settings_section'
+		);
+	}
+
+	/*
+	 * Callback for PHP code field
+	 */
+	public function php_code_field_callback() {
+		$php_code = get_option( 'ccm_php_code' );
+		echo '<textarea name="ccm_php_code" rows="10" cols="50" class="large-text">' . esc_textarea( $php_code ) . '</textarea>';
+	}
+
+	/*
+	 * Callback for HTML code field
+	 */
+	public function html_code_field_callback() {
+		$html_code = get_option( 'ccm_html_code' );
+		echo '<textarea name="ccm_php_code" rows="10" cols="50" class="large-text">' . esc_textarea( $html_code ) . '</textarea>';
+	}
+
+	/*
+	 * Callback for JS code field
+	 */
+	public function js_code_field_callback() {
+		$js_code = get_option( 'ccm_js_code' );
+		echo '<textarea name="ccm_php_code" rows="10" cols="50" class="large-text">' . esc_textarea( $js_code ) . '</textarea>';
+
+	}
 }

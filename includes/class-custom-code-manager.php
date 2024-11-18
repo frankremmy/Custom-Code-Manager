@@ -103,24 +103,30 @@ class Custom_Code_Manager {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-custom-code-manager-loader.php';
+		require_once CUSTOM_CODE_MANAGER_PATH . 'includes/class-custom-code-manager-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-custom-code-manager-i18n.php';
+		require_once CUSTOM_CODE_MANAGER_PATH . 'includes/class-custom-code-manager-i18n.php';
+
+		// Load inject classes
+		require_once CUSTOM_CODE_MANAGER_PATH . 'includes/class-inject-html.php';
+		require_once CUSTOM_CODE_MANAGER_PATH . 'includes/class-inject-js.php';
+		require_once CUSTOM_CODE_MANAGER_PATH . 'includes/class-inject-php.php';
+
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-custom-code-manager-admin.php';
+		require_once CUSTOM_CODE_MANAGER_PATH . 'admin/class-custom-code-manager-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-custom-code-manager-public.php';
+		require_once CUSTOM_CODE_MANAGER_PATH . 'public/class-custom-code-manager-public.php';
 
 		$this->loader = new Custom_Code_Manager_Loader();
 
@@ -156,6 +162,8 @@ class Custom_Code_Manager {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_admin_menu' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'setup_admin_settings' );
 
 	}
 
