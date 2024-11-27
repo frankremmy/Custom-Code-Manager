@@ -14,36 +14,41 @@ class Custom_Code_Manager_Meta_Boxes {
 	 */
 	public function add_custom_meta_boxes() {
 		add_meta_box(
-			'ccm_snippets_meta_boxes',
-			'Snippet Settings',
-			array( $this, 'render_meta_box' ),
+			'ccm_snippet_meta_box',
+			'Code Editor',
+			array( $this, 'render_main_code_editor' ),
 			'ccm_code_snippets',
-			'side',
-			'default'
+			'normal', // Set to 'normal' to make it appear in the main area.
+			'high'
 		);
 	}
 		/*
 		 * Render the meta box content
 		 */
-	public function render_meta_box( $post ) {
+
+	/**
+	 * Render the main code editor in the content area.
+	 */
+	public function render_main_code_editor( $post ) {
+		// Add a nonce for security
 		wp_nonce_field( 'ccm_save_meta_box_data', 'ccm_meta_box_nonce' );
 
-		// Get the current values of the meta fields
-		$snippet_type = get_post_meta( $post->ID, 'ccm_snippet_type', true );
-		$active_status = get_post_meta( $post->ID, 'ccm_active_status', true );
+		// Get the current content of the code snippet
+		$snippet_content = get_post_meta( $post->ID, '_ccm_snippet_content', true );
 
-		// Snippet type dropdown
-		echo '<label for="ccm_snippet_type">Snippet Type:</label>';
-		echo '<select id="ccm_snippet_type" name="ccm_snippet_type">';
-		echo '<option value="php"' . selected( $snippet_type, 'php', false ) . '>PHP</option>';
-		echo '<option value="html"' . selected( $snippet_type, 'html', false ) . '>HTML</option>';
-		echo '<option value="js"' . selected( $snippet_type, 'js', false ) . '>JavaScript</option>';
-		echo '</select>';
+		// Enqueue the CodeMirror scripts and styles
+		wp_enqueue_code_editor( array( 'type' => 'text/html' ) );
+		wp_enqueue_script( 'wp-theme-plugin-editor' );
+		wp_enqueue_style( 'wp-codemirror' );
 
-		// Active Status Checkbox
-		echo '<p><label for="ccm_active_status">';
-		echo '<input type="checkbox" id="ccm_active_status" name="ccm_active_status" value="1"' . checked( $active_status, '1', false ) . '>';
-		echo ' Active</label></p>';
+		// Output the custom code editor
+		echo '<div style="margin-top: 10px;">';
+		echo '<label for="ccm_snippet_content">Code Snippet:</label>';
+		echo '<textarea id="ccm_snippet_content" name="ccm_snippet_content" rows="20" style="width: 100%;">' . esc_textarea( $snippet_content ) . '</textarea>';
+		echo '</div>';
+
+		// Initialize CodeMirror for syntax highlighting
+		echo '<script>jQuery( function() { wp.codeEditor.initialize( "ccm_snippet_content", {} ); } );</script>';
 	}
 
 	/*
@@ -64,6 +69,10 @@ class Custom_Code_Manager_Meta_Boxes {
 
 		if ( isset( $_POST['ccm_snippet_type'] ) ) {
 			update_post_meta( $post_id, 'ccm_snippet_type', sanitize_text_field( $_POST['ccm_snippet_type'] ) );
+		}
+
+		if ( isset( $_POST['ccm_snippet_content'] ) ) {
+			update_post_meta( $post_id, '_ccm_snippet_content', $_POST['ccm_snippet_content'] );
 		}
 
 		$active_status = isset( $_POST['ccm_active_status'] ) ? 1 : 0;

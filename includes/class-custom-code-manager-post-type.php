@@ -31,10 +31,10 @@ class Custom_Code_Manager_Post_Type {
 		$args = array(
 			'labels' => $labels,
 			'public' => true,
-			'has_archive' => true,
+			'has_archive' => false,
 			'menu_icon' => 'dashicons-editor-code',
-			'supports' => array( 'title', 'editor', 'author' ),
-			'show_in_rest' => true,
+			'supports' => array( 'title' ),
+			'show_in_rest' => false,
 		);
 		register_post_type( 'ccm_code_snippets', $args );
 	}
